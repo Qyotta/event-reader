@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>de.qyotta.eventreader</groupId>
+   <artifactId>event-reader</artifactId>
+   <version>1.0.0</version>
+
+   <packaging>jar</packaging>
+
+   <properties>
+      <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
+      <mockito.version>1.10.19</mockito.version>
+      <junit.version>4.12</junit.version>
+      <awaitility.version>1.7.0</awaitility.version>
+      <lombok.version>1.16.10</lombok.version>
+      <prometheus.version>0.0.21</prometheus.version>
+      <slf4j-api.version>1.7.25</slf4j-api.version>
+      <commons-lang3.version>3.6</commons-lang3.version>
+   </properties>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-eclipse-plugin</artifactId>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+      <resources>
+         <resource>
+            <directory>src/main/resources</directory>
+            <filtering>true</filtering>
+         </resource>
+      </resources>
+
+   </build>
+
+   <reporting>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+            <version>${maven.surefire.plugin.version}</version>
+            <configuration>
+               <includes>
+                  <include>**/AllTests.java</include>
+               </includes>
+            </configuration>
+         </plugin>
+      </plugins>
+   </reporting>
+
+   <dependencies>
+      <!-- https://mvnrepository.com/artifact/io.netty/netty-common -->
+      <dependency>
+         <groupId>io.netty</groupId>
+         <artifactId>netty-common</artifactId>
+         <version>4.1.12.Final</version>
+      </dependency>
+
+   	<dependency>
+	      <groupId>org.apache.commons</groupId>
+	      <artifactId>commons-lang3</artifactId>
+	      <version>${commons-lang3.version}</version>
+	   </dependency>
+   	  <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+         <version>${slf4j-api.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>io.prometheus</groupId>
+         <artifactId>simpleclient</artifactId>
+         <version>${prometheus.version}</version>
+      </dependency>
+   	  <dependency>
+         <groupId>org.projectlombok</groupId>
+         <artifactId>lombok</artifactId>
+         <version>${lombok.version}</version>
+      </dependency>
+      <!-- awaitility (async testing) -->
+      <dependency>
+         <groupId>com.jayway.awaitility</groupId>
+         <artifactId>awaitility</artifactId>
+         <version>${awaitility.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.mockito</groupId>
+         <artifactId>mockito-all</artifactId>
+         <version>${mockito.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>${junit.version}</version>
+         <scope>test</scope>
+      </dependency>
+
+   </dependencies>
+</project>
