@@ -19,10 +19,27 @@
       <prometheus.version>0.0.21</prometheus.version>
       <slf4j-api.version>1.7.25</slf4j-api.version>
       <commons-lang3.version>3.6</commons-lang3.version>
+      <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
    </properties>
 
    <build>
       <plugins>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>2.7.1</version>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>${maven.compiler.plugin.version}</version>
+            <configuration>
+               <source>1.8</source>
+               <target>1.8</target>
+               <meminitial>1024m</meminitial>
+               <maxmem>2024m</maxmem>
+            </configuration>
+         </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-eclipse-plugin</artifactId>
@@ -46,7 +63,6 @@
             <filtering>true</filtering>
          </resource>
       </resources>
-
    </build>
 
    <reporting>
@@ -69,7 +85,7 @@
       <dependency>
          <groupId>io.netty</groupId>
          <artifactId>netty-common</artifactId>
-         <version>4.1.12.Final</version>
+         <version>4.0.42.Final</version>
       </dependency>
 
    	<dependency>

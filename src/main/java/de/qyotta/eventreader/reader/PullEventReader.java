@@ -32,8 +32,11 @@ public abstract class PullEventReader<T> extends EventReader {
 
    private boolean wasStopped;
 
-   public PullEventReader(final EventReaderRepository eventReaderRepository, final String streamName, final ExceptionListener exceptionListener, final String id) {
+   private final EventStore<T> eventStore;
+
+   public PullEventReader(final EventStore<T> eventStore, final EventReaderRepository eventReaderRepository, final String streamName, final ExceptionListener exceptionListener, final String id) {
       super(eventReaderRepository, streamName, exceptionListener, id);
+      this.eventStore = eventStore;
       resetDelay();
    }
 
@@ -67,8 +70,6 @@ public abstract class PullEventReader<T> extends EventReader {
       newScheduledThreadPool.schedule(command, delay, TimeUnit.MILLISECONDS);
    }
 
-   protected abstract List<T> readNextEvents(final String lastHandledEventId) throws ReadFailedException;
-
    protected void processEvents() {
       try {
          if (wasStopped) {
@@ -77,7 +78,7 @@ public abstract class PullEventReader<T> extends EventReader {
 
          final String lastHandledEventId = minusOneIfEventIdIsNotSet();
 
-         final List<T> events = readNextEvents(lastHandledEventId);
+         final List<T> events = eventStore.readNextEvents(lastHandledEventId);
 
          for (final T eventResponse : events) {
             if (wasStopped) {

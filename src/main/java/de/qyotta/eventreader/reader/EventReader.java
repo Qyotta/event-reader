@@ -66,7 +66,7 @@ public abstract class EventReader {
       final EventReaderState eventReaderState = eventReaderRepository.findById(eventReaderId);
 
       if (eventReaderState == null) {
-         LOGGER.warn("Could not find reader info in collection '" + eventReaderRepository.getClass() + "' with document id '" + eventReaderId
+         LOGGER.warn("Could not find reader info with id '" + eventReaderId
                + ". Will >> NOT << start the reader from the very first event to prevent you from harm. You might be distracted by this, but think about the moment when it saves you.  If you really want to start the reader from the first event, please explicitly crate the document in the collection.");
          return;
       }

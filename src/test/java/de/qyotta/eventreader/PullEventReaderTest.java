@@ -14,6 +14,7 @@ import com.jayway.awaitility.Duration;
 
 import de.qyotta.eventreader.data.EventReaderState;
 import de.qyotta.eventreader.reader.EventReaderRepository;
+import de.qyotta.eventreader.reader.EventStore;
 import de.qyotta.eventreader.reader.PullEventReader;
 import de.qyotta.eventreader.reader.ReadFailedException;
 import lombok.AllArgsConstructor;
@@ -33,13 +34,15 @@ public class PullEventReaderTest {
             .id("the-id")
             .build());
 
-      final PullEventReader<TestEvent> eventReader = new PullEventReader<TestEvent>(eventReaderRepository, "the-stream", null, "the-id") {
+      final PullEventReader<TestEvent> eventReader = new PullEventReader<TestEvent>(new EventStore<TestEvent>() {
 
          @Override
-         protected List<TestEvent> readNextEvents(final String lastHandledEventId) throws ReadFailedException {
+         public List<TestEvent> readNextEvents(final String lastHandledEventId) throws ReadFailedException {
             id = lastHandledEventId;
             return Arrays.asList(new TestEvent(1, false), new TestEvent(2, true));
          }
+
+      }, eventReaderRepository, "the-stream", null, "the-id") {
 
          @Override
          protected String handle(final TestEvent event) {
