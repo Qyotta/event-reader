@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
-
    <groupId>de.qyotta.eventreader</groupId>
    <artifactId>event-reader</artifactId>
    <version>1.0.0</version>
-
    <packaging>jar</packaging>
-
-   <properties>    
+   <properties>
       <maven.compiler.source>1.8</maven.compiler.source>
       <maven.compiler.target>1.8</maven.compiler.target>
       <maven.surefire.plugin.version>2.19.1</maven.surefire.plugin.version>
@@ -21,7 +18,12 @@
       <commons-lang3.version>3.6</commons-lang3.version>
       <maven.compiler.plugin.version>3.0</maven.compiler.plugin.version>
    </properties>
-
+   <distributionManagement>
+      <repository>
+         <id>nexus-deployment</id>
+         <url>http://nexus.team/content/repositories/releases/</url>
+      </repository>
+   </distributionManagement>
    <build>
       <plugins>
          <plugin>
@@ -64,7 +66,6 @@
          </resource>
       </resources>
    </build>
-
    <reporting>
       <plugins>
          <plugin>
@@ -79,7 +80,6 @@
          </plugin>
       </plugins>
    </reporting>
-
    <dependencies>
       <!-- https://mvnrepository.com/artifact/io.netty/netty-common -->
       <dependency>
@@ -87,13 +87,12 @@
          <artifactId>netty-common</artifactId>
          <version>4.0.42.Final</version>
       </dependency>
-
-   	<dependency>
-	      <groupId>org.apache.commons</groupId>
-	      <artifactId>commons-lang3</artifactId>
-	      <version>${commons-lang3.version}</version>
-	   </dependency>
-   	  <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+      <dependency>
+         <groupId>org.apache.commons</groupId>
+         <artifactId>commons-lang3</artifactId>
+         <version>${commons-lang3.version}</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
       <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-api</artifactId>
@@ -104,7 +103,7 @@
          <artifactId>simpleclient</artifactId>
          <version>${prometheus.version}</version>
       </dependency>
-   	  <dependency>
+      <dependency>
          <groupId>org.projectlombok</groupId>
          <artifactId>lombok</artifactId>
          <version>${lombok.version}</version>
@@ -116,20 +115,17 @@
          <version>${awaitility.version}</version>
          <scope>test</scope>
       </dependency>
-
       <dependency>
          <groupId>org.mockito</groupId>
          <artifactId>mockito-all</artifactId>
          <version>${mockito.version}</version>
          <scope>test</scope>
       </dependency>
-
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <version>${junit.version}</version>
          <scope>test</scope>
       </dependency>
-
    </dependencies>
 </project>
