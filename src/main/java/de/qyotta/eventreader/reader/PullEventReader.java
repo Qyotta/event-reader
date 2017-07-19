@@ -12,6 +12,8 @@ import io.prometheus.client.Gauge;
 @SuppressWarnings("nls")
 public abstract class PullEventReader<T> extends EventReader {
 
+   private static final int DEFAULT_INITIAL_DELAY = 1;
+
    private static final Gauge DELAY_GAUGE = Gauge.build()
          .namespace("event_reader")
          .name("pull_delay")
@@ -27,6 +29,7 @@ public abstract class PullEventReader<T> extends EventReader {
          .register();
 
    private int delay;
+   private int initialDelay = 1;
    private Runnable command;
    private ScheduledExecutorService newScheduledThreadPool;
 
@@ -34,14 +37,20 @@ public abstract class PullEventReader<T> extends EventReader {
 
    private final EventStore<T> eventStore;
 
-   public PullEventReader(final EventStore<T> eventStore, final EventReaderRepository eventReaderRepository, final String streamName, final ExceptionListener exceptionListener, final String id) {
+   public PullEventReader(final EventStore<T> eventStore, final EventReaderRepository eventReaderRepository, final String streamName, final ExceptionListener exceptionListener, final String id,
+         final int initialDelay) {
       super(eventReaderRepository, streamName, exceptionListener, id);
       this.eventStore = eventStore;
+      this.initialDelay = initialDelay;
       resetDelay();
    }
 
+   public PullEventReader(final EventStore<T> eventStore, final EventReaderRepository eventReaderRepository, final String streamName, final ExceptionListener exceptionListener, final String id) {
+      this(eventStore, eventReaderRepository, streamName, exceptionListener, id, DEFAULT_INITIAL_DELAY);
+   }
+
    private void resetDelay() {
-      this.delay = 1;
+      this.delay = initialDelay;
       DELAY_GAUGE.labels(streamName, getEventReaderId(), MetricConstants.PULL)
             .set(delay / 1000.d);
    }
