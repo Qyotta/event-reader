@@ -85,7 +85,7 @@
       <dependency>
          <groupId>io.netty</groupId>
          <artifactId>netty-common</artifactId>
-         <version>4.0.46.Final</version>
+         <version>4.1.13.Final</version>
       </dependency>
       <dependency>
          <groupId>org.apache.commons</groupId>
