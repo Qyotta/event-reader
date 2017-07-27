@@ -30,7 +30,7 @@ public abstract class PullEventReader<T> extends EventReader {
 
    private int delay;
    private int initialDelay = 1;
-   private Runnable command;
+   private final Runnable eventProcessingRun = new EventProcessingRun();
    private ScheduledExecutorService newScheduledThreadPool;
 
    private boolean wasStopped;
@@ -70,13 +70,7 @@ public abstract class PullEventReader<T> extends EventReader {
       resetDelay();
       wasStopped = false;
       newScheduledThreadPool = Executors.newSingleThreadScheduledExecutor();
-
-      command = new EventProcessingRunner();
-
-      // initial kick-off
-      SCHEDULER_GAUGE.labels(streamName, getEventReaderId(), MetricConstants.SCHEDULE, MetricConstants.PULL)
-            .set(getCurrentSeconds());
-      newScheduledThreadPool.schedule(command, delay, TimeUnit.MILLISECONDS);
+      scheduleNextRun();
    }
 
    protected void processEvents() {
@@ -134,17 +128,30 @@ public abstract class PullEventReader<T> extends EventReader {
       return currentTimeMillis / 1000.0d;
    }
 
-   private final class EventProcessingRunner implements Runnable {
+   private void scheduleNextRun() {
+      newScheduledThreadPool.schedule(eventProcessingRun, delay, TimeUnit.MILLISECONDS);
+      SCHEDULER_GAUGE.labels(streamName, getEventReaderId(), MetricConstants.SCHEDULE, MetricConstants.PULL)
+            .set(getCurrentSeconds());
+   }
+
+   private void beforeProcessing() {
+      SCHEDULER_GAUGE.labels(streamName, getEventReaderId(), MetricConstants.START, MetricConstants.PULL)
+            .set(getCurrentSeconds());
+   }
+
+   private void afterProcessing() {
+      SCHEDULER_GAUGE.labels(streamName, getEventReaderId(), MetricConstants.END, MetricConstants.PULL)
+            .set(getCurrentSeconds());
+   }
+
+   private final class EventProcessingRun implements Runnable {
       @Override
       public void run() {
-         SCHEDULER_GAUGE.labels(streamName, getEventReaderId(), MetricConstants.START, MetricConstants.PULL)
-               .set(getCurrentSeconds());
-
+         beforeProcessing();
          processEvents();
-
-         newScheduledThreadPool.schedule(command, delay, TimeUnit.MILLISECONDS);
-         SCHEDULER_GAUGE.labels(streamName, getEventReaderId(), MetricConstants.END, MetricConstants.PULL)
-               .set(getCurrentSeconds());
+         afterProcessing();
+         scheduleNextRun();
       }
+
    }
 }
