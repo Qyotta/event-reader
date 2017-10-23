@@ -1,5 +1,13 @@
 package de.qyotta.eventreader;
 
+import de.qyotta.eventreader.data.EventReaderState;
+import de.qyotta.eventreader.reader.EventReaderRepository;
+import de.qyotta.eventreader.reader.EventStore;
+import de.qyotta.eventreader.reader.PullEventReader;
+import de.qyotta.eventreader.reader.ReadFailedException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import static com.jayway.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
 
@@ -11,14 +19,6 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.jayway.awaitility.Duration;
-
-import de.qyotta.eventreader.data.EventReaderState;
-import de.qyotta.eventreader.reader.EventReaderRepository;
-import de.qyotta.eventreader.reader.EventStore;
-import de.qyotta.eventreader.reader.PullEventReader;
-import de.qyotta.eventreader.reader.ReadFailedException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
 @SuppressWarnings("nls")
 @RunWith(MockitoJUnitRunner.class)
@@ -40,6 +40,11 @@ public class PullEventReaderTest {
          public List<TestEvent> readNextEvents(final String lastHandledEventId) throws ReadFailedException {
             id = lastHandledEventId;
             return Arrays.asList(new TestEvent(1, false), new TestEvent(2, true));
+         }
+
+         @Override
+         public String getStream() {
+            return "mystream";
          }
 
       }, eventReaderRepository, "the-stream", null, "the-id") {
