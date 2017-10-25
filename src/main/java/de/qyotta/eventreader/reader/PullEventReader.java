@@ -81,7 +81,7 @@ public abstract class PullEventReader<T> extends EventReader {
 
          final String lastHandledEventId = minusOneIfEventIdIsNotSet();
 
-         final List<T> events = eventStore.readNextEvents(lastHandledEventId);
+         final List<T> events = eventStore.readNextEvents(streamName, lastHandledEventId);
 
          for (final T eventResponse : events) {
             if (wasStopped) {
