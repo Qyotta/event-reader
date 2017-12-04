@@ -47,7 +47,7 @@ public class PullEventReaderTest {
       final PullEventReader<TestEvent> eventReader = new PullEventReader<TestEvent>(new EventStore<TestEvent>() {
 
          @Override
-         public List<TestEvent> readNextEvents(final String streamName, final String lastHandledEventId) throws ReadFailedException {
+         public List<TestEvent> readNextEvents(final String streamName, final String lastHandledEventId, final String eventReaderId) throws ReadFailedException {
             id = lastHandledEventId;
             return Arrays.asList(new TestEvent(1, false), new TestEvent(2, true));
          }
@@ -72,7 +72,7 @@ public class PullEventReaderTest {
    @Test
    public void shouldReadAllEventsOnce() {
       final Set<TestEvent> readEvents = new LinkedHashSet<>();
-      final EventStore<TestEvent> eventstore = (String streamName, String lastHandledEventId) -> {
+      final EventStore<TestEvent> eventstore = (String streamName, String lastHandledEventId, final String eventReaderId) -> {
          return inMemoryEventstore.readEvents(Long.valueOf(lastHandledEventId)+1, 4096L);
       };
 
@@ -106,7 +106,7 @@ public class PullEventReaderTest {
    public void shouldReadNewEvents() {
       final List<TestEvent> readEvents = new LinkedList<>();
 
-      final EventStore<TestEvent> eventstore = (streamName, lastHandledEventId) -> {
+      final EventStore<TestEvent> eventstore = (streamName, lastHandledEventId, eventReaderId) -> {
          return inMemoryEventstore.readEvents(Long.valueOf(lastHandledEventId) + 1, 4096L);
       };
 
@@ -144,7 +144,7 @@ public class PullEventReaderTest {
    @Test
    @Ignore
    public void shouldRestartAtSameNumberAfterPause() throws Exception {
-      final EventStore<TestEvent> eventstore = (streamName, lastHandledEventId) -> {
+      final EventStore<TestEvent> eventstore = (streamName, lastHandledEventId, eventReaderId) -> {
          return inMemoryEventstore.readEvents(Long.valueOf(lastHandledEventId), 4096L);
       };
 

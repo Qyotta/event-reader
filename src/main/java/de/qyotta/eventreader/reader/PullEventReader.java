@@ -1,13 +1,13 @@
 package de.qyotta.eventreader.reader;
 
+import de.qyotta.eventreader.listener.ExceptionListener;
+import de.qyotta.eventreader.util.MetricConstants;
+import io.prometheus.client.Gauge;
+
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import de.qyotta.eventreader.listener.ExceptionListener;
-import de.qyotta.eventreader.util.MetricConstants;
-import io.prometheus.client.Gauge;
 
 @SuppressWarnings("nls")
 public abstract class PullEventReader<T> extends EventReader {
@@ -81,7 +81,7 @@ public abstract class PullEventReader<T> extends EventReader {
 
          final String lastHandledEventId = minusOneIfEventIdIsNotSet();
 
-         final List<T> events = eventStore.readNextEvents(streamName, lastHandledEventId);
+         final List<T> events = eventStore.readNextEvents(streamName, lastHandledEventId, getEventReaderId());
 
          for (final T eventResponse : events) {
             if (wasStopped) {
