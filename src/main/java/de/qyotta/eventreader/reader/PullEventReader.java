@@ -9,9 +9,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressWarnings("nls")
 public abstract class PullEventReader<T> extends EventReader {
 
+   private static final Logger LOGGER = LoggerFactory.getLogger(PullEventReader.class);
    private static final int DEFAULT_INITIAL_DELAY = 1;
 
    private static final Gauge DELAY_GAUGE = Gauge.build()
@@ -67,6 +71,7 @@ public abstract class PullEventReader<T> extends EventReader {
     */
    @Override
    protected void startReadingEvents(final String fromEventNumberExclusive) {
+      LOGGER.debug("[" + getEventReaderId() + "] Starting reading events from " + fromEventNumberExclusive);
       resetDelay();
       wasStopped = false;
       newScheduledThreadPool = Executors.newSingleThreadScheduledExecutor();
@@ -83,6 +88,8 @@ public abstract class PullEventReader<T> extends EventReader {
 
          final List<T> events = eventStore.readNextEvents(streamName, lastHandledEventId, getEventReaderId());
 
+         LOGGER.debug("[" + getEventReaderId() + "] Found " + events.size() + " events");
+
          for (final T eventResponse : events) {
             if (wasStopped) {
                return;
@@ -93,7 +100,9 @@ public abstract class PullEventReader<T> extends EventReader {
             resetDelay();
          }
 
+         LOGGER.debug("[" + getEventReaderId() + "] Handled all events from response");
       } catch (final Exception e) {
+         LOGGER.error(e.getMessage(), e);
          runningEventReaderInfoWithException(e);
          doubleDelay();
       }
@@ -129,6 +138,7 @@ public abstract class PullEventReader<T> extends EventReader {
    }
 
    private void scheduleNextRun() {
+      LOGGER.debug("[" + getEventReaderId() + "] Scheduling next run in " + delay);
       newScheduledThreadPool.schedule(eventProcessingRun, delay, TimeUnit.MILLISECONDS);
       SCHEDULER_GAUGE.labels(streamName, getEventReaderId(), MetricConstants.SCHEDULE, MetricConstants.PULL)
             .set(getCurrentSeconds());
@@ -147,6 +157,7 @@ public abstract class PullEventReader<T> extends EventReader {
    private final class EventProcessingRun implements Runnable {
       @Override
       public void run() {
+         LOGGER.debug("[" + getEventReaderId() + "] Scheduled event processing");
          beforeProcessing();
          processEvents();
          afterProcessing();

@@ -1,14 +1,14 @@
 package de.qyotta.eventreader.reader;
 
+import de.qyotta.eventreader.data.EventReaderState;
+import de.qyotta.eventreader.listener.ExceptionListener;
+import io.prometheus.client.Gauge;
+
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.qyotta.eventreader.data.EventReaderState;
-import de.qyotta.eventreader.listener.ExceptionListener;
-import io.prometheus.client.Gauge;
 
 @SuppressWarnings("nls")
 public abstract class EventReader {
@@ -56,7 +56,7 @@ public abstract class EventReader {
    }
 
    public void start() {
-      LOGGER.info("<><><> [" + getEventReaderId() + "] start()");
+      LOGGER.debug("<><><> [" + getEventReaderId() + "] start()");
       stopReadingEvents();
       persistStartState();
       run();
@@ -133,6 +133,7 @@ public abstract class EventReader {
    }
 
    protected void onEventHandled(final String eventId) {
+      LOGGER.debug("[" + getEventReaderId() + "] Handled event " + eventId);
       eventReaderRepository.save(EventReaderState.builder()
             .id(this.eventReaderId)
             .eventId(eventId)
